@@ -1,0 +1,21 @@
+Pour générer un module nest.js avec une commande
+
+$ nest generate module status
+
+Pour générer un module dans un dossier spécifique avec une commande
+
+$ nest generate module app/modules/status --flat
+
+------------------------------------------------------------------------------
+
+Pour générer un controller nest.js avec une commande
+
+$ nest generate controller status
+
+Pour générer un controller dans un dossier spécifique avec une commande
+
+$ nest generate controller app/controllers/status --flat
+
+------------------------------------------------------------------------------
+
+Si je retire --flat de la commande, il créera automatiquement un dossier controller
