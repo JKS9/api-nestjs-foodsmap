@@ -20,6 +20,7 @@ dotenv.config();
  */
 import { AppModule } from './app/app.module';
 import { config } from '../config/env.config';
+import { AllExceptionsFilter } from 'config/logger.config';
 
 /**
  * START API
@@ -28,6 +29,9 @@ async function bootstrap() {
   try {
     // Create an instance of the Nest.js application
     const app: INestApplication<any> = await NestFactory.create(AppModule);
+
+    // Set up a global exception filter to handle unhandled exceptions
+    app.useGlobalFilters(new AllExceptionsFilter());
 
     // Get the port number from the configuration
     const port: string = config().app.port;
