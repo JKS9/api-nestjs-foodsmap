@@ -19,3 +19,15 @@ $ nest generate controller app/controllers/status --flat
 ------------------------------------------------------------------------------
 
 Si je retire --flat de la commande, il créera automatiquement un dossier controller
+
+------------------------------------------------------------------------------
+
+Pour générer un service nest.js avec une commande
+
+$ nest generate service status
+
+Pour générer un service dans un dossier spécifique avec une commande
+
+$ nest generate service app/service/status --flat
+
+------------------------------------------------------------------------------

@@ -36,39 +36,7 @@ export class User extends Document {
   @Prop()
   nbUserYouFollow: number;
 
-  @Prop({
-    notifications: {
-      newRestaurantFriend: {
-        type: Boolean,
-        default: false,
-      },
-      gradeRestaurant: {
-        type: Boolean,
-        default: false,
-      },
-      newUser: {
-        type: Boolean,
-        default: false,
-      },
-      updateFoodsmap: {
-        type: Boolean,
-        default: false,
-      },
-      classicNews: {
-        type: Boolean,
-        default: false,
-      },
-    },
-    darkMode: {
-      type: Boolean,
-      default: false,
-    },
-    private: {
-      type: Boolean,
-      default: true,
-    },
-    language: String,
-  })
+  @Prop({ type: Object })
   setting: {
     notifications: {
       newRestaurantFriend: boolean;
