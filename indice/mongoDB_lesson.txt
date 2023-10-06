@@ -1,0 +1,16 @@
+https://learn.mongodb.com/dashboard
+
+----------------------------------------------------------------------------------------------------------------------------
+
+Lorsque vous souhaitez récupérer les amis d'un utilisateur, utilisez populate() :
+
+Dans votre service ou contrôleur, lorsque vous récupérez un utilisateur, utilisez populate('friends') pour remplir les données de ses amis.
+
+const userWithFriends = await this.userModel
+  .findById(userId)
+  .populate('friends', '-password') // Utilisez '-password' pour exclure le champ 'password'
+  .exec();
+
+// userWithFriends.friends contiendra maintenant les données complètes de ses amis
+
+----------------------------------------------------------------------------------------------------------------------------

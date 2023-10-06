@@ -8,6 +8,7 @@ import { INestApplication } from '@nestjs/common';
  * IMPORT MODULES
  */
 import * as figlet from 'figlet';
+import * as mongoose from 'mongoose';
 
 /**
  * CONFIG DOTENV
@@ -21,6 +22,7 @@ dotenv.config();
 import { AppModule } from './app/app.module';
 import { config } from '../config/env.config';
 import { AllExceptionsFilter } from 'config/logger.config';
+import { option } from '../config/mongodb.config';
 
 /**
  * START API
@@ -35,6 +37,9 @@ async function bootstrap() {
 
     // Get the port number from the configuration
     const port: string = config().app.port;
+
+    // Add connection to DB
+    await mongoose.connect(config().dataBase.url, option);
 
     // Listen to the application on the specified port
     await app.listen(port);

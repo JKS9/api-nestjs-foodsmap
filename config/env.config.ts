@@ -12,4 +12,14 @@ export const config = () => ({
      */
     port: process.env.PORT,
   },
+  dataBase: {
+    url:
+      'mongodb+srv://' +
+      process.env.MONGODB_USERNAME +
+      ':' +
+      process.env.MONGODB_PASSWORD +
+      '@' +
+      process.env.MONGODB_NAME +
+      '.irrvqjm.mongodb.net/?retryWrites=true&w=majority',
+  },
 });
