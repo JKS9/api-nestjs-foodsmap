@@ -1,0 +1,13 @@
+
+import { JwtModule } from '@nestjs/jwt';
+import { config } from 'config/env.config';
+  
+  @UseGuards(AuthGuard)
+
+  imports: [
+    JwtModule.register({
+      global: true,
+      secret: config().token,
+      signOptions: { expiresIn: '60s' },
+    }),
+  ],

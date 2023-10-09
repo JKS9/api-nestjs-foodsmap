@@ -20,6 +20,7 @@ export const config = () => ({
       process.env.MONGODB_PASSWORD +
       '@' +
       process.env.MONGODB_NAME +
-      '.irrvqjm.mongodb.net/?retryWrites=true&w=majority',
+      '.irrvqjm.mongodb.net/Foodsmap_dev?retryWrites=true',
   },
+  token: process.env.SECRET,
 });

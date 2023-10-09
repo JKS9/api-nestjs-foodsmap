@@ -2,9 +2,10 @@ import {
   IsString,
   IsEmail,
   IsOptional,
-  IsBoolean,
   IsNumber,
   IsObject,
+  MinLength,
+  Matches,
 } from 'class-validator';
 import { Types } from 'mongoose';
 
@@ -15,10 +16,14 @@ export class CreateUserDto {
   @IsString()
   pseudo: string;
 
-  @IsEmail()
+  @IsEmail({}, { message: 'The email address is invalid' })
   email: string;
 
   @IsString()
+  @MinLength(8, { message: 'Password must contain at least 8 characters' })
+  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])/, {
+    message: 'Password must meet stricter complexity criteria',
+  })
   password: string;
 
   @IsOptional()

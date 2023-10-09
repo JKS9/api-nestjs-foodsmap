@@ -2,13 +2,12 @@
  * IMPORT MODULES NEST.JS
  */
 import { NestFactory } from '@nestjs/core';
-import { INestApplication } from '@nestjs/common';
+import { INestApplication, ValidationPipe } from '@nestjs/common';
 
 /**
  * IMPORT MODULES
  */
 import * as figlet from 'figlet';
-import * as mongoose from 'mongoose';
 
 /**
  * CONFIG DOTENV
@@ -21,18 +20,19 @@ dotenv.config();
  */
 import { AppModule } from './app/app.module';
 import { config } from '../config/env.config';
-import { AllExceptionsFilter } from 'config/logger.config';
-
+import { WinstonModule } from 'nest-winston';
+import { winstonConfig } from 'config/logger.config';
 /**
  * START API
  */
 async function bootstrap() {
   try {
     // Create an instance of the Nest.js application
-    const app: INestApplication<any> = await NestFactory.create(AppModule);
+    const app: INestApplication<any> = await NestFactory.create(AppModule, {
+      logger: WinstonModule.createLogger(winstonConfig),
+    });
 
-    // Set up a global exception filter to handle unhandled exceptions
-    app.useGlobalFilters(new AllExceptionsFilter());
+    app.useGlobalPipes(new ValidationPipe());
 
     // Get the port number from the configuration
     const port: string = config().app.port;

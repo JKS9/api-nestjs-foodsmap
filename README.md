@@ -47,8 +47,6 @@ Have you ever tasted a dish so delicious that you didn't want to forget it? Or p
 
 To get started with the FoodMap API, follow the instructions below.
 
-<br>
-
 ## Installation
 
 Clone this repository to your local machine:
