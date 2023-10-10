@@ -18,7 +18,11 @@ export class AuthenticationService {
     @InjectModel('Token') private tokenModel: Model<Token>,
   ) {}
 
-  async register(user: CreateUserDto) {
+  async register(user: CreateUserDto): Promise<{
+    _id: any;
+    accessToken: any;
+    refreshToken: any;
+  }> {
     const alreadyUser: User[] = await this.findOneUser(user);
     if (alreadyUser.length) {
       throw new UnauthorizedException('Email Already used');

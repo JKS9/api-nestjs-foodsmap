@@ -9,6 +9,7 @@ import { UserModule } from './modules/user/user.module';
 import { HashPasswordMiddleware } from './middlewares/hash-password/hash-password.middleware';
 import { WinstonModule } from 'nest-winston';
 import { LoggerMiddleware } from './middlewares/logger/logger.middelware';
+import { FriendsModule } from './modules/friends/friends.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { LoggerMiddleware } from './middlewares/logger/logger.middelware';
     StatusModule,
     AuthenticationModule,
     UserModule,
+    FriendsModule,
   ],
 })
 export class AppModule {

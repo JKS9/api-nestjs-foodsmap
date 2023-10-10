@@ -1,6 +1,5 @@
-import { Controller, Post, Body, UnauthorizedException } from '@nestjs/common';
+import { Controller, Post, Body } from '@nestjs/common';
 import { AuthenticationService } from 'src/app/services/authentication/authentication.service';
-import { User } from 'src/app/services/user/schemas/user.schema';
 import { CreateUserDto } from 'src/common/dto/user/createUser.dto';
 import { loginDtoUser } from 'src/common/dto/user/loginUser.dto';
 
@@ -9,7 +8,7 @@ export class AuthenticationController {
   constructor(private readonly authenticationService: AuthenticationService) {}
 
   @Post('/register')
-  async register(@Body() body: CreateUserDto) {
+  async register(@Body() body: CreateUserDto): Promise<object> {
     const token: {
       _id: any;
       accessToken: any;
@@ -26,7 +25,7 @@ export class AuthenticationController {
   }
 
   @Post('/login')
-  async login(@Body() body: loginDtoUser) {
+  async login(@Body() body: loginDtoUser): Promise<object> {
     const token: {
       _id: any;
       accessToken: any;

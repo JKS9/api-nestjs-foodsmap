@@ -9,7 +9,7 @@ export class StatusController {
 
   // Define a route handler for GET requests at 'status/V1'
   @Get('V1')
-  health(): any {
+  health(): object {
     // Delegate the request handling to the StatusService's 'health' method
     return this.statusService.health();
   }

@@ -8,6 +8,6 @@ import { config } from 'config/env.config';
     JwtModule.register({
       global: true,
       secret: config().token,
-      signOptions: { expiresIn: '60s' },
+      signOptions: { expiresIn: '1h' },
     }),
   ],

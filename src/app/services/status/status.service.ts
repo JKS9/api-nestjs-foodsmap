@@ -7,7 +7,7 @@ const dateStart: Date = new Date();
 @Injectable()
 export class StatusService {
   // Define a method 'health' that returns an object with version and start time information
-  health() {
+  health(): object {
     return {
       version: 'V1', // Version information
       started: dateStart.toISOString(), // The ISO string representation of the start time
