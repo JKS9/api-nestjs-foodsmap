@@ -68,4 +68,8 @@ export class CreateUserDto {
   @IsOptional()
   @IsObject()
   friends: Types.ObjectId[];
+
+  @IsOptional()
+  @IsObject()
+  FollowingYou: Types.ObjectId[];
 }

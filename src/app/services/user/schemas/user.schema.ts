@@ -15,9 +15,6 @@ export class User extends Document {
   @Prop()
   password: string;
 
-  @Prop({ type: [{ type: Types.ObjectId, ref: 'User' }] })
-  friends: Types.ObjectId[];
-
   @Prop({ default: 0 })
   nbFavorites: number;
 
@@ -33,8 +30,14 @@ export class User extends Document {
   @Prop({ default: 0 })
   nbUserFollowingYou: number;
 
+  @Prop({ type: [{ type: Types.ObjectId, ref: 'User' }] })
+  FollowingYou: Types.ObjectId[];
+
   @Prop({ default: 0 })
   nbUserYouFollow: number;
+
+  @Prop({ type: [{ type: Types.ObjectId, ref: 'User' }] })
+  friends: Types.ObjectId[];
 
   @Prop({
     type: Object,

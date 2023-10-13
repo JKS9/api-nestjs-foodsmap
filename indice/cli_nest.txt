@@ -28,6 +28,6 @@ $ nest generate service status
 
 Pour générer un service dans un dossier spécifique avec une commande
 
-$ nest generate service app/service/status --flat
+$ nest generate service app/services/status --flat
 
 ------------------------------------------------------------------------------

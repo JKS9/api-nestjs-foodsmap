@@ -8,8 +8,10 @@ import { UserModel } from 'src/app/services/user/schemas/user.schema';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: 'User', schema: UserModel }]),
-    MongooseModule.forFeature([{ name: 'Token', schema: TokenModel }]),
+    MongooseModule.forFeature([
+      { name: 'User', schema: UserModel },
+      { name: 'Token', schema: TokenModel },
+    ]),
   ],
   controllers: [AuthenticationController], // Specify the controllers used in this module
   providers: [AuthenticationService],

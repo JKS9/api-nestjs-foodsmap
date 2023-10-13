@@ -10,6 +10,7 @@ import { HashPasswordMiddleware } from './middlewares/hash-password/hash-passwor
 import { WinstonModule } from 'nest-winston';
 import { LoggerMiddleware } from './middlewares/logger/logger.middelware';
 import { FriendsModule } from './modules/friends/friends.module';
+import { RestaurantModule } from './modules/restaurant/restaurant.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { FriendsModule } from './modules/friends/friends.module';
     AuthenticationModule,
     UserModule,
     FriendsModule,
+    RestaurantModule,
   ],
 })
 export class AppModule {
