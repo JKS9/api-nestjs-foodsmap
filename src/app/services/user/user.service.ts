@@ -12,7 +12,7 @@ export class UserService {
     return this.userModel
       .findById(id)
       .select('-password')
-      .populate('friends', '-password -setting')
+      .populate('friends followingYou', '-password -setting')
       .exec();
   }
 }

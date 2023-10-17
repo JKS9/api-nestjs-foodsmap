@@ -46,6 +46,10 @@ export class CreateUserDto {
   nbFavorites: number;
 
   @IsOptional()
+  @IsObject()
+  favorites: Types.ObjectId[];
+
+  @IsOptional()
   @IsNumber()
   nbRestaurant: number;
 

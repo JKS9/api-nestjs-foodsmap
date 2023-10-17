@@ -18,6 +18,9 @@ export class User extends Document {
   @Prop({ default: 0 })
   nbFavorites: number;
 
+  @Prop({ type: [{ type: Types.ObjectId, ref: 'Restaurant' }] })
+  favorites: Types.ObjectId[];
+
   @Prop({ default: 0 })
   nbRestaurant: number;
 

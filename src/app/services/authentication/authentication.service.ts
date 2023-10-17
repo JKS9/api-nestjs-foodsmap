@@ -95,7 +95,7 @@ export class AuthenticationService {
 
   private generateAccessToken(userId: number): string {
     return jwt.sign({ userId: userId }, config().token, {
-      expiresIn: '1h',
+      expiresIn: 3600,
     });
   }
 
