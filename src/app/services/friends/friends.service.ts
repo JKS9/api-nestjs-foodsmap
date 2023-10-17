@@ -21,11 +21,14 @@ export class FriendsService {
       throw new NotFoundException('User or friend not found');
     }
 
-    const friendIdString = friendId.toString();
+    const friendIdString: string = friendId.toString();
 
     if (!user.friends.includes(new mongoose.Types.ObjectId(friendIdString))) {
       user.friends.push(new mongoose.Types.ObjectId(friendIdString));
       await user.save();
+      await this.incrementNbFriend(userId, friendId, 1);
+      await this.incrementFriend(userId, friendId);
+
       return { status: 201, description: 'Friend added successfully' };
     }
 
@@ -42,7 +45,7 @@ export class FriendsService {
       throw new NotFoundException('User not found');
     }
 
-    const friendIdString = friendId.toString();
+    const friendIdString: string = friendId.toString();
 
     const index = user.friends.indexOf(
       new mongoose.Types.ObjectId(friendIdString),
@@ -51,9 +54,81 @@ export class FriendsService {
     if (index !== -1) {
       user.friends.splice(index, 1);
       await user.save();
+      await this.incrementNbFriend(userId, friendId, -1);
+      await this.incrementDeleteFriend(userId, friendId);
+
       return { status: 204, description: 'Friend remove successfully' };
     }
 
     return { status: 204, description: 'Friend remove successfully' };
+  }
+
+  private async incrementNbFriend(
+    userId: string,
+    friendId: string,
+    add: number,
+  ) {
+    try {
+      await this.userModel
+        .updateOne(
+          {
+            _id: new mongoose.Types.ObjectId(userId),
+          },
+          { $inc: { nbUserYouFollow: add } },
+        )
+        .exec();
+
+      await this.userModel
+        .updateOne(
+          {
+            _id: new mongoose.Types.ObjectId(friendId),
+          },
+          { $inc: { nbUserFollowingYou: add } },
+        )
+        .exec();
+    } catch (e) {
+      console.log(e);
+      throw new NotFoundException('An unexpected error');
+    }
+  }
+
+  private async incrementFriend(userId: string, friendId: string) {
+    try {
+      const user = await this.userModel
+        .findById(friendId)
+        .select('-password')
+        .exec();
+
+      if (!user.followingYou.includes(new mongoose.Types.ObjectId(userId))) {
+        user.followingYou.push(new mongoose.Types.ObjectId(userId));
+        await user.save();
+      }
+    } catch (e) {
+      console.log(e);
+      throw new NotFoundException('An unexpected error');
+    }
+  }
+
+  private async incrementDeleteFriend(userId: string, friendId: string) {
+    try {
+      const user = await this.userModel
+        .findById(friendId)
+        .select('-password')
+        .exec();
+
+      const userIdString: string = userId.toString();
+
+      const index = user.followingYou.indexOf(
+        new mongoose.Types.ObjectId(userIdString),
+      );
+
+      if (index !== -1) {
+        user.followingYou.splice(index, 1);
+        await user.save();
+      }
+    } catch (e) {
+      console.log(e);
+      throw new NotFoundException('An unexpected error');
+    }
   }
 }

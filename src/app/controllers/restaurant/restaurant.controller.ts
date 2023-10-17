@@ -17,13 +17,12 @@ import { UpdateDtoRestaurant } from 'src/common/dto/restaurant/updateRestaurant.
 
 import { AuthGuard } from 'src/common/guards/authentication/auth.guard';
 
-@UseGuards(AuthGuard)
 @Controller('/restaurant')
+@UseGuards(AuthGuard)
 export class RestaurantController {
   constructor(private readonly restaurantService: RestaurantService) {}
 
   @Post()
-  //@UseGuards(AuthGuard)
   async createRestaurant(
     @Req() req: Request,
     @Body() body: CreateDtoRestaurant,
@@ -32,7 +31,6 @@ export class RestaurantController {
   }
 
   @Put()
-  //@UseGuards(AuthGuard)
   async updateRestaurant(
     @Req() req: Request,
     @Body() body: UpdateDtoRestaurant,
@@ -41,7 +39,6 @@ export class RestaurantController {
   }
 
   @Get('/:id')
-  //@UseGuards(AuthGuard)
   async findOneRestaurant(
     @Req() req: Request,
     @Param() params: FindOneDtoRestaurant,
@@ -51,13 +48,11 @@ export class RestaurantController {
   }
 
   @Get()
-  //@UseGuards(AuthGuard)
   async findAllRestaurnant(@Req() req: Request) {
     return this.restaurantService.findAllRestaurnant(req['user']);
   }
 
   @Delete('/:id')
-  //@UseGuards(AuthGuard)
   async deleteRestaurnant(
     @Req() req: Request,
     @Param() params: FindOneDtoRestaurant,

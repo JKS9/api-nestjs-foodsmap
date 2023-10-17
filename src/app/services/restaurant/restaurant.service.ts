@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
 import { User } from '../user/schemas/user.schema';
@@ -15,7 +19,22 @@ export class RestaurantService {
 
   async createRestaurant(restaurant: CreateDtoRestaurant, userId: string) {
     restaurant.createdBy = new mongoose.Types.ObjectId(userId);
-    return await new this.restaurantModel(restaurant).save();
+
+    try {
+      await this.userModel
+        .updateOne(
+          {
+            _id: new mongoose.Types.ObjectId(userId),
+          },
+          { $inc: { nbRestaurant: 1, nbGrade: 1 } },
+        )
+        .exec();
+
+      return await new this.restaurantModel(restaurant).save();
+    } catch (e) {
+      console.log(e);
+      throw new NotFoundException('An unexpected error');
+    }
   }
 
   async updateRestaurant(restaurant: UpdateDtoRestaurant, userId: string) {
@@ -25,9 +44,7 @@ export class RestaurantService {
           _id: new mongoose.Types.ObjectId(restaurant._id),
           createdBy: new mongoose.Types.ObjectId(userId),
         },
-        {
-          restaurant,
-        },
+        restaurant,
       )
       .exec();
   }
@@ -35,7 +52,7 @@ export class RestaurantService {
   async findOneRestaurant(id: string, userId: string) {
     const result = await this.restaurantModel.findById(id).exec();
 
-    if (String(result.createdBy) != userId) {
+    if (String(result?.createdBy) != userId) {
       throw new UnauthorizedException("You don't have the permission");
     }
 
@@ -50,14 +67,28 @@ export class RestaurantService {
   }
 
   async deleteRestaurnant(id: string, userId: string) {
-    await this.restaurantModel
-      .findOneAndDelete({
-        createdBy: new mongoose.Types.ObjectId(userId),
-        _id: new mongoose.Types.ObjectId(id),
-      })
-      .exec();
-    return {
-      message: 'Document Delete',
-    };
+    try {
+      await this.restaurantModel
+        .findOneAndDelete({
+          createdBy: new mongoose.Types.ObjectId(userId),
+          _id: new mongoose.Types.ObjectId(id),
+        })
+        .exec();
+
+      await this.userModel
+        .updateOne(
+          {
+            _id: new mongoose.Types.ObjectId(userId),
+          },
+          { $inc: { nbRestaurant: -1, nbGrade: -1 } },
+        )
+        .exec();
+      return {
+        message: 'Document Delete',
+      };
+    } catch (e) {
+      console.log(e);
+      throw new NotFoundException('An unexpected error');
+    }
   }
 }

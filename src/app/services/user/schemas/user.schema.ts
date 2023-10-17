@@ -31,7 +31,7 @@ export class User extends Document {
   nbUserFollowingYou: number;
 
   @Prop({ type: [{ type: Types.ObjectId, ref: 'User' }] })
-  FollowingYou: Types.ObjectId[];
+  followingYou: Types.ObjectId[];
 
   @Prop({ default: 0 })
   nbUserYouFollow: number;
