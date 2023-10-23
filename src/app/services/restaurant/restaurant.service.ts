@@ -1,34 +1,28 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
-import { User } from '../user/schemas/user.schema';
+
 import { Restaurant } from './schemas/restaurant.schema';
+import { UserService } from '../user/user.service';
+
 import { CreateDtoRestaurant } from 'src/common/dto/restaurant/createRestaurant.dto';
 import { UpdateDtoRestaurant } from 'src/common/dto/restaurant/updateRestaurant.dto';
+
+import { IUpdateRestaurant } from 'src/common/typescript/restaurant/restaurant';
 
 @Injectable()
 export class RestaurantService {
   constructor(
-    @InjectModel('User') private userModel: Model<User>,
-    @InjectModel('Restaurant') private restaurantModel: Model<Restaurant>,
+    private readonly userService: UserService,
+    @InjectModel('Restaurant')
+    private readonly restaurantModel: Model<Restaurant>,
   ) {}
 
   async createRestaurant(restaurant: CreateDtoRestaurant, userId: string) {
     restaurant.createdBy = new mongoose.Types.ObjectId(userId);
 
     try {
-      await this.userModel
-        .updateOne(
-          {
-            _id: new mongoose.Types.ObjectId(userId),
-          },
-          { $inc: { nbRestaurant: 1, nbGrade: 1 } },
-        )
-        .exec();
+      await this.incrementRestauant(userId, 1);
 
       return await new this.restaurantModel(restaurant).save();
     } catch (e) {
@@ -50,42 +44,45 @@ export class RestaurantService {
   }
 
   async findOneRestaurant(id: string, userId: string) {
-    const result = await this.restaurantModel.findById(id).exec();
-
-    if (String(result?.createdBy) != userId) {
-      throw new UnauthorizedException("You don't have the permission");
-    }
-
-    return result;
+    return await this.restaurantModel
+      .findOne({ _id: id, createdBy: userId })
+      .exec();
   }
 
   async findAllRestaurnant(userId: string) {
-    console.log(userId);
     return await this.restaurantModel.find({
-      createdBy: new mongoose.Types.ObjectId(userId),
+      createdBy: userId,
     });
   }
 
   async deleteRestaurnant(id: string, userId: string) {
     try {
-      await this.restaurantModel
+      const result: Object = await this.restaurantModel
         .findOneAndDelete({
           createdBy: new mongoose.Types.ObjectId(userId),
           _id: new mongoose.Types.ObjectId(id),
         })
         .exec();
 
-      await this.userModel
-        .updateOne(
-          {
-            _id: new mongoose.Types.ObjectId(userId),
-          },
-          { $inc: { nbRestaurant: -1, nbGrade: -1 } },
-        )
-        .exec();
+      if (result) {
+        await this.incrementRestauant(userId, -1);
+      }
+
       return {
         message: 'Document Delete',
       };
+    } catch (e) {
+      console.log(e);
+      throw new NotFoundException('An unexpected error');
+    }
+  }
+
+  private async incrementRestauant(userId: string, nb: number): Promise<void> {
+    try {
+      const update: IUpdateRestaurant = {
+        $inc: { nbRestaurant: nb, nbGrade: nb },
+      };
+      await this.userService.updateOne({ _id: userId }, update);
     } catch (e) {
       console.log(e);
       throw new NotFoundException('An unexpected error');

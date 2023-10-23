@@ -43,7 +43,6 @@ export class RestaurantController {
     @Req() req: Request,
     @Param() params: FindOneDtoRestaurant,
   ) {
-    console.log(params);
     return this.restaurantService.findOneRestaurant(params.id, req['user']);
   }
 

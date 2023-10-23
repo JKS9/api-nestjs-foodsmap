@@ -1,33 +1,35 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { User } from '../user/schemas/user.schema';
-import mongoose, { Model } from 'mongoose';
+import mongoose from 'mongoose';
+
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class FriendsService {
-  constructor(@InjectModel('User') private userModel: Model<User>) {}
+  constructor(private readonly userService: UserService) {}
 
   async addFriend(userId: string, friendId: string): Promise<object> {
-    const user = await this.userModel
-      .findById(userId)
-      .select('-password')
-      .exec();
-    const friend = await this.userModel
-      .findById(friendId)
-      .select('-password')
-      .exec();
+    const user = await this.userService.findOne({ _id: userId }, '-password');
+
+    const friend = await this.userService.findOne(
+      { _id: friendId },
+      '-password',
+    );
 
     if (!user || !friend) {
       throw new NotFoundException('User or friend not found');
     }
 
-    const friendIdString: string = friendId.toString();
+    const friendIdString = new mongoose.Types.ObjectId(friendId);
 
-    if (!user.friends.includes(new mongoose.Types.ObjectId(friendIdString))) {
-      user.friends.push(new mongoose.Types.ObjectId(friendIdString));
-      await user.save();
+    if (!user.friends.includes(friendIdString)) {
+      const update = {
+        $addToSet: { friends: friendId },
+      };
+
+      await this.userService.updateOne({ _id: userId }, update);
+
       await this.incrementNbFriend(userId, friendId, 1);
-      await this.incrementFriend(userId, friendId);
+      await this.updateFriendList(userId, friendId, '$addToSet');
 
       return { status: 201, description: 'Friend added successfully' };
     }
@@ -36,29 +38,21 @@ export class FriendsService {
   }
 
   async removeFriend(userId: string, friendId: string): Promise<object> {
-    const user = await this.userModel
-      .findById(userId)
-      .select('-password')
-      .exec();
+    const user = await this.userService.findOne({ _id: userId }, '-password');
 
     if (!user) {
       throw new NotFoundException('User not found');
     }
 
-    const friendIdString: string = friendId.toString();
+    const friendIdString = new mongoose.Types.ObjectId(friendId);
 
-    const index = user.friends.indexOf(
-      new mongoose.Types.ObjectId(friendIdString),
-    );
+    const update = {
+      $pull: { friends: friendIdString },
+    };
 
-    if (index !== -1) {
-      user.friends.splice(index, 1);
-      await user.save();
-      await this.incrementNbFriend(userId, friendId, -1);
-      await this.incrementDeleteFriend(userId, friendId);
-
-      return { status: 204, description: 'Friend remove successfully' };
-    }
+    await this.userService.updateOne({ _id: userId }, update);
+    await this.incrementNbFriend(userId, friendId, -1);
+    await this.updateFriendList(userId, friendId, '$pull');
 
     return { status: 204, description: 'Friend remove successfully' };
   }
@@ -66,68 +60,36 @@ export class FriendsService {
   private async incrementNbFriend(
     userId: string,
     friendId: string,
-    add: number,
-  ) {
+    nb: number,
+  ): Promise<void> {
     try {
-      await this.userModel
-        .updateOne(
-          {
-            _id: new mongoose.Types.ObjectId(userId),
-          },
-          { $inc: { nbUserYouFollow: add } },
-        )
-        .exec();
+      const updateForUser = { $inc: { nbUserYouFollow: nb } };
+      const updateForFriend = { $inc: { nbUserFollowingYou: nb } };
 
-      await this.userModel
-        .updateOne(
-          {
-            _id: new mongoose.Types.ObjectId(friendId),
-          },
-          { $inc: { nbUserFollowingYou: add } },
-        )
-        .exec();
+      await Promise.all([
+        this.userService.updateOne({ _id: userId }, updateForUser),
+        this.userService.updateOne({ _id: friendId }, updateForFriend),
+      ]);
     } catch (e) {
       console.log(e);
       throw new NotFoundException('An unexpected error');
     }
   }
 
-  private async incrementFriend(userId: string, friendId: string) {
+  private async updateFriendList(
+    userId: string,
+    friendId: string,
+    operation: '$addToSet' | '$pull',
+  ): Promise<void> {
     try {
-      const user = await this.userModel
-        .findById(friendId)
-        .select('-password')
-        .exec();
+      const userIdObj = new mongoose.Types.ObjectId(userId);
+      const update = {
+        [operation]: { followingYou: userIdObj },
+      };
 
-      if (!user.followingYou.includes(new mongoose.Types.ObjectId(userId))) {
-        user.followingYou.push(new mongoose.Types.ObjectId(userId));
-        await user.save();
-      }
+      await this.userService.updateOne({ _id: friendId }, update);
     } catch (e) {
-      console.log(e);
-      throw new NotFoundException('An unexpected error');
-    }
-  }
-
-  private async incrementDeleteFriend(userId: string, friendId: string) {
-    try {
-      const user = await this.userModel
-        .findById(friendId)
-        .select('-password')
-        .exec();
-
-      const userIdString: string = userId.toString();
-
-      const index = user.followingYou.indexOf(
-        new mongoose.Types.ObjectId(userIdString),
-      );
-
-      if (index !== -1) {
-        user.followingYou.splice(index, 1);
-        await user.save();
-      }
-    } catch (e) {
-      console.log(e);
+      console.error(e);
       throw new NotFoundException('An unexpected error');
     }
   }

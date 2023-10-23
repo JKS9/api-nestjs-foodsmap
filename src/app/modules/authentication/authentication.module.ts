@@ -1,17 +1,21 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
+import { JwtModule } from '@nestjs/jwt';
+
+import { config } from 'config/env.config';
 
 import { AuthenticationController } from 'src/app/controllers/authentication/authentication.controller';
 import { AuthenticationService } from 'src/app/services/authentication/authentication.service';
-import { TokenModel } from 'src/app/services/authentication/schemas/token.schema';
-import { UserModel } from 'src/app/services/user/schemas/user.schema';
+import { UserModule } from '../user/user.module';
+import { TokenModule } from '../token/token.module';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([
-      { name: 'User', schema: UserModel },
-      { name: 'Token', schema: TokenModel },
-    ]),
+    UserModule,
+    TokenModule,
+    JwtModule.register({
+      secret: config().token,
+      signOptions: { expiresIn: '1h' },
+    }),
   ],
   controllers: [AuthenticationController], // Specify the controllers used in this module
   providers: [AuthenticationService],
