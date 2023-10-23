@@ -21,5 +21,6 @@ import { config } from 'config/env.config';
   ],
   controllers: [RestaurantController],
   providers: [RestaurantService],
+  exports: [RestaurantService],
 })
 export class RestaurantModule {}

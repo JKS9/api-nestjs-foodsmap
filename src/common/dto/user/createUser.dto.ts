@@ -59,10 +59,6 @@ export class CreateUserDto {
 
   @IsOptional()
   @IsNumber()
-  averageGrades: number;
-
-  @IsOptional()
-  @IsNumber()
   nbUserFollowingYou: number;
 
   @IsOptional()

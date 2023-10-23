@@ -43,7 +43,7 @@ export class RestaurantController {
     @Req() req: Request,
     @Param() params: FindOneDtoRestaurant,
   ) {
-    return this.restaurantService.findOneRestaurant(params.id, req['user']);
+    return this.restaurantService.findOne(params.id, req['user']);
   }
 
   @Get()

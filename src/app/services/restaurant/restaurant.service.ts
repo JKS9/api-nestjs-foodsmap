@@ -43,9 +43,12 @@ export class RestaurantService {
       .exec();
   }
 
-  async findOneRestaurant(id: string, userId: string) {
+  async findOne(id: string, userId: string) {
     return await this.restaurantModel
-      .findOne({ _id: id, createdBy: userId })
+      .findOne({
+        _id: new mongoose.Types.ObjectId(id),
+        createdBy: new mongoose.Types.ObjectId(userId),
+      })
       .exec();
   }
 

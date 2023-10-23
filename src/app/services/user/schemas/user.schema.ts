@@ -28,9 +28,6 @@ export class User extends Document {
   nbGrade: number;
 
   @Prop({ default: 0 })
-  averageGrades: number;
-
-  @Prop({ default: 0 })
   nbUserFollowingYou: number;
 
   @Prop({ type: [{ type: Types.ObjectId, ref: 'User' }] })

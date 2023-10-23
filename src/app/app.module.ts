@@ -11,6 +11,7 @@ import { WinstonModule } from 'nest-winston';
 import { LoggerMiddleware } from './middlewares/logger/logger.middelware';
 import { FriendsModule } from './modules/friends/friends.module';
 import { RestaurantModule } from './modules/restaurant/restaurant.module';
+import { FavorisModule } from './modules/favoris/favorise.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { RestaurantModule } from './modules/restaurant/restaurant.module';
     AuthenticationModule,
     UserModule,
     FriendsModule,
+    FavorisModule,
     RestaurantModule,
   ],
 })
