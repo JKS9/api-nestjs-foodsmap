@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
+import { Tag } from '../../tag/schema/tag.schema';
 
 @Schema({ collection: 'Restaurant', timestamps: true })
 export class Restaurant extends Document {
@@ -16,8 +17,8 @@ export class Restaurant extends Document {
   @Prop()
   photos: string[];
 
-  @Prop({ type: Types.ObjectId, ref: 'tags', required: true })
-  tag: Types.ObjectId[];
+  @Prop({ type: Types.ObjectId, ref: 'Tag', required: true })
+  tag: Types.ObjectId;
 
   @Prop({
     required: true,
@@ -28,7 +29,7 @@ export class Restaurant extends Document {
     type: Number,
     validate: {
       validator: (value: number) => value >= 1 && value <= 5,
-      message: 'Rating must be between 0 and 5',
+      message: 'Rating must be between 1 and 5',
     },
     required: true,
   })

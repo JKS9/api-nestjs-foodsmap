@@ -12,6 +12,7 @@ import { LoggerMiddleware } from './middlewares/logger/logger.middelware';
 import { FriendsModule } from './modules/friends/friends.module';
 import { RestaurantModule } from './modules/restaurant/restaurant.module';
 import { FavorisModule } from './modules/favoris/favorise.module';
+import { TagModule } from './modules/tag/tag.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { FavorisModule } from './modules/favoris/favorise.module';
     FriendsModule,
     FavorisModule,
     RestaurantModule,
+    TagModule,
   ],
 })
 export class AppModule {

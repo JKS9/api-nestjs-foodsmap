@@ -9,6 +9,7 @@ import { CreateDtoRestaurant } from 'src/common/dto/restaurant/createRestaurant.
 import { UpdateDtoRestaurant } from 'src/common/dto/restaurant/updateRestaurant.dto';
 
 import { IUpdateRestaurant } from 'src/common/typescript/restaurant/restaurant';
+import { FilterDtoRestaurant } from 'src/common/dto/restaurant/filterRestaurant.dto';
 
 @Injectable()
 export class RestaurantService {
@@ -18,8 +19,10 @@ export class RestaurantService {
     private readonly restaurantModel: Model<Restaurant>,
   ) {}
 
-  async createRestaurant(restaurant: CreateDtoRestaurant, userId: string) {
+  async create(restaurant: CreateDtoRestaurant, userId: string) {
     restaurant.createdBy = new mongoose.Types.ObjectId(userId);
+
+    restaurant.tag = new mongoose.Types.ObjectId(restaurant.tag);
 
     try {
       await this.incrementRestauant(userId, 1);
@@ -31,7 +34,7 @@ export class RestaurantService {
     }
   }
 
-  async updateRestaurant(restaurant: UpdateDtoRestaurant, userId: string) {
+  async updateOne(restaurant: UpdateDtoRestaurant, userId: string) {
     return this.restaurantModel
       .updateOne(
         {
@@ -49,16 +52,24 @@ export class RestaurantService {
         _id: new mongoose.Types.ObjectId(id),
         createdBy: new mongoose.Types.ObjectId(userId),
       })
+      .populate('tag')
       .exec();
   }
 
-  async findAllRestaurnant(userId: string) {
+  async findAll(userId: string) {
     return await this.restaurantModel.find({
       createdBy: userId,
     });
   }
 
-  async deleteRestaurnant(id: string, userId: string) {
+  async findByFilter(userId: string, filter: FilterDtoRestaurant) {
+    return await this.restaurantModel.find({
+      filter,
+      createdBy: userId,
+    });
+  }
+
+  async delete(id: string, userId: string) {
     try {
       const result: Object = await this.restaurantModel
         .findOneAndDelete({

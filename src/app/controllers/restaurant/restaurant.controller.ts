@@ -7,7 +7,7 @@ import {
   Get,
   Delete,
   Body,
-  Put,
+  Patch,
 } from '@nestjs/common';
 
 import { RestaurantService } from 'src/app/services/restaurant/restaurant.service';
@@ -23,39 +23,27 @@ export class RestaurantController {
   constructor(private readonly restaurantService: RestaurantService) {}
 
   @Post()
-  async createRestaurant(
-    @Req() req: Request,
-    @Body() body: CreateDtoRestaurant,
-  ) {
-    return this.restaurantService.createRestaurant(body, req['user']);
+  async create(@Req() req: Request, @Body() body: CreateDtoRestaurant) {
+    return this.restaurantService.create(body, req['user']);
   }
 
-  @Put()
-  async updateRestaurant(
-    @Req() req: Request,
-    @Body() body: UpdateDtoRestaurant,
-  ) {
-    return this.restaurantService.updateRestaurant(body, req['user']);
+  @Patch()
+  async updateOne(@Req() req: Request, @Body() body: UpdateDtoRestaurant) {
+    return this.restaurantService.updateOne(body, req['user']);
   }
 
   @Get('/:id')
-  async findOneRestaurant(
-    @Req() req: Request,
-    @Param() params: FindOneDtoRestaurant,
-  ) {
+  async findOne(@Req() req: Request, @Param() params: FindOneDtoRestaurant) {
     return this.restaurantService.findOne(params.id, req['user']);
   }
 
   @Get()
-  async findAllRestaurnant(@Req() req: Request) {
-    return this.restaurantService.findAllRestaurnant(req['user']);
+  async findAll(@Req() req: Request) {
+    return this.restaurantService.findAll(req['user']);
   }
 
   @Delete('/:id')
-  async deleteRestaurnant(
-    @Req() req: Request,
-    @Param() params: FindOneDtoRestaurant,
-  ) {
-    return this.restaurantService.deleteRestaurnant(params.id, req['user']);
+  async delete(@Req() req: Request, @Param() params: FindOneDtoRestaurant) {
+    return this.restaurantService.delete(params.id, req['user']);
   }
 }

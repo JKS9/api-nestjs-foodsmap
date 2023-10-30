@@ -22,8 +22,8 @@ export class CreateDtoRestaurant {
   @IsArray()
   photos: string[];
 
-  @IsArray()
-  tag: Types.ObjectId[];
+  @IsString()
+  tag: Types.ObjectId;
 
   @IsBoolean()
   private: boolean;

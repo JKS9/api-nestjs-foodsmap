@@ -28,8 +28,8 @@ export class UpdateDtoRestaurant {
   photos: string[];
 
   @IsOptional()
-  @IsArray()
-  tag: Types.ObjectId[];
+  @IsString()
+  tag: Types.ObjectId;
 
   @IsOptional()
   @IsBoolean()
